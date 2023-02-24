@@ -4,6 +4,13 @@
     <OutputType>Library</OutputType>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <Version>1.0.0</Version>
+    <Description>
+    The SpaceDivisor is a useful tool for data analysis and search, 
+    especially when dealing with large, 
+    high-dimensional data sets. 
+    It provides a way to divide the data into manageable chunks and 
+    quickly search for nearby elements.
+    </Description>
     <PackageId>SpaceDivisor</PackageId>
     <PackageVersion>$(Version)</PackageVersion>
     <Authors>Kemsekov</Authors>
