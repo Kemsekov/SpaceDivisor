@@ -4,7 +4,7 @@
     <OutputType>Library</OutputType>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <Version>1.0.0</Version>
-    <PackageId>Kemsekov.GraphSharp</PackageId>
+    <PackageId>SpaceDivisor</PackageId>
     <PackageVersion>$(Version)</PackageVersion>
     <Authors>Kemsekov</Authors>
     <PackageProjectUrl>https://github.com/Kemsekov/SpaceDivisor</PackageProjectUrl>
