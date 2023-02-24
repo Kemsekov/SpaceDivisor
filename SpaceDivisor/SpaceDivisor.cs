@@ -96,21 +96,20 @@ namespace MathNet.Numerics
             var index = GetIndex(v);
 
             foreach (var v1 in FastRead(index) ?? Enumerable.Empty<TValue>())
-                if (GetPosition(v1) != v)
                     yield return v1;
 
             for (int i = 0; i < Dimensions; i++)
             {
                 var originalValue = index[i];
-
                 index[i] = originalValue + 1;
-                index[i] = Math.Min(index[i], RowSize - 1);
+
                 foreach (var v1 in FastRead(index) ?? Enumerable.Empty<TValue>())
                     yield return v1;
+
                 index[i] = originalValue - 1;
-                index[i] = Math.Max(index[i], 0);
                 foreach (var v1 in FastRead(index) ?? Enumerable.Empty<TValue>())
                     yield return v1;
+                
                 index[i] = originalValue;
             }
         }
@@ -177,8 +176,7 @@ namespace MathNet.Numerics
             var index = GetIndex(v);
             if (radius == 0)
                 foreach (var v1 in FastRead(index) ?? Enumerable.Empty<TValue>())
-                    if (GetPosition(v1) != v)
-                        yield return v1;
+                    yield return v1;
 
             if (radius <= 0) yield break;
 
@@ -198,7 +196,6 @@ namespace MathNet.Numerics
                 }
             }
         }
-
         public IEnumerable<TValue> this[TValue index] => this[GetPosition(index)];
         public IEnumerable<TValue> this[Vector index] => this[GetIndex(index)];
         void FillStorage()
