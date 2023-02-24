@@ -20,5 +20,6 @@ public class UnitTest1
 
         var d = new SpaceDivisor<TestData>(testData,x=>x.position);
         
+        
     }
 }

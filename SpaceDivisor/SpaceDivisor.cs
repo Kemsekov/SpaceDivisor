@@ -17,7 +17,7 @@ namespace MathNet.Numerics
             Dimensions = getPosition(data.First()).Count;
             RowSize = (int)MathF.Ceiling(MathF.Pow(Size, 1.0f / Dimensions));
             var toAllocate = (int)Math.Pow(RowSize, Dimensions);
-            //we allocte in roughly O(n) space complexity
+            //we allocate in roughly O(n) space complexity
             storage = ArrayPool<List<TValue>>.Shared.Rent(toAllocate);
             normalizer = Normalizer();
             FillStorage();
@@ -25,11 +25,11 @@ namespace MathNet.Numerics
         public int[] GetIndex(Vector v)
         {
             var index = GetNormalized(v);
-            var multiplyer = Math.Max(RowSize - 1, 1);
+            var multiplier = Math.Max(RowSize, 1);
             var result = new int[Dimensions];
             for (int i = 0; i < Dimensions; i++)
             {
-                result[i] = (int)(index[i] * (multiplyer));
+                result[i] = (int)MathF.Min(index[i] * multiplier,RowSize-1);
             }
             return result;
         }
@@ -39,7 +39,6 @@ namespace MathNet.Numerics
         List<TValue>? FastRead(int[] index)
         {
             var intIndex = 0;
-            var multiplyer = Math.Max(RowSize - 1, 1);
             for (int i = 0; i < Dimensions; i++)
             {
                 if (index[i] >= RowSize || index[i] < 0) return null;
@@ -47,14 +46,34 @@ namespace MathNet.Numerics
             }
             return storage[intIndex];
         }
-        public List<TValue> this[params int[] index]
+        public IEnumerable<TValue> this[params int[] index]
         {
             get
             {
                 if (index.Length != Dimensions)
                     throw new ArgumentException($"Index have not enough dimensions! Given {index.Length}. Required {Dimensions}");
                 var intIndex = 0;
-                var multiplyer = Math.Max(RowSize - 1, 1);
+                for (int i = 0; i < Dimensions; i++)
+                {
+                    if (index[i] >= RowSize || index[i] < 0)
+                    {
+                        throw new IndexOutOfRangeException($"{index[i]}>={RowSize} or {index[i]}<0");
+                    }
+                    intIndex += (int)(index[i] * MathF.Pow(RowSize, i));
+                }
+                var value = storage[intIndex];
+                if (value is null)
+                {
+                    return Enumerable.Empty<TValue>();
+                }
+                return value;
+            }
+        }
+        List<TValue> GetOrCreate(int[] index)
+        {
+                if (index.Length != Dimensions)
+                    throw new ArgumentException($"Index have not enough dimensions! Given {index.Length}. Required {Dimensions}");
+                var intIndex = 0;
                 for (int i = 0; i < Dimensions; i++)
                 {
                     if (index[i] >= RowSize || index[i] < 0)
@@ -70,7 +89,6 @@ namespace MathNet.Numerics
                     storage[intIndex] = value;
                 }
                 return value;
-            }
         }
         public IEnumerable<TValue> Near(TValue v) => Near(GetPosition(v));
         public IEnumerable<TValue> Near(Vector v)
@@ -181,13 +199,13 @@ namespace MathNet.Numerics
             }
         }
 
-        public List<TValue> this[TValue index] => this[GetPosition(index)];
-        public List<TValue> this[Vector index] => this[GetIndex(index)];
+        public IEnumerable<TValue> this[TValue index] => this[GetPosition(index)];
+        public IEnumerable<TValue> this[Vector index] => this[GetIndex(index)];
         void FillStorage()
         {
             foreach (var v in Data)
             {
-                this[GetPosition(v)].Add(v);
+                GetOrCreate(GetIndex(GetPosition(v))).Add(v);
             }
         }
 
