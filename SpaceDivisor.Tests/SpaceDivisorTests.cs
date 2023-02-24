@@ -34,11 +34,6 @@ public class SpaceDivisorTests
         Assert.Equal(SpaceDivisor.Dimensions,Dimensions);
     }
     [Fact]
-    public void RightSize()
-    {
-        Assert.Equal(SpaceDivisor.Size,TestData.Count());
-    }
-    [Fact]
     public void GetNormalized_Works(){
         var maxVector = TestData.Aggregate((n1,n2)=>{
             return new TestData(-1,(Vector)n1.position.PointwiseMaximum(n2.position));
